@@ -1,0 +1,120 @@
+#!/bin/bash
+
+sets=10
+reps=3
+rest_duration=25
+up_duration=2
+down_duration=4
+
+function play_sound() {
+
+	if [ "$2" == "important" ]; then
+		echo "$2" > /tmp/gvt
+	fi
+	mplayer --slave --quiet "$(pwd)/$1.mp3" > /dev/null 2>&1
+	if [ "$2" == "important" ]; then
+		rm -f /tmp/gvt
+	fi
+
+}
+
+function say() {
+
+	if [ "$2" == "important" -o ! -f /tmp/gvt ]; then
+		play_sound "$1" "$2"&
+	fi
+
+}
+
+function say_sentence() {
+
+	for word in $(seq 1 $#); do
+		eval play_sound \"\${$word}\" important
+	done
+
+}
+
+function countdown() {
+
+	say "next set warning" important
+	for sec in $(seq 1 8); do
+		echo -n "$((16 - sec)) "
+		sleep 1
+	done
+	say "starting in" important
+	for sec in $(seq 1 7); do
+		sec_left=$((8 - sec))
+		echo -n "$sec_left "
+		say $sec_left
+		sleep 1
+	done
+
+}
+
+function count_rep() {
+
+	for count in $(seq $1 $2); do
+		sleep 0.5
+		say $(($2 + 1 - $count))
+		echo -n "$(($2 + 1 - $count)) "
+	done
+	sleep 0.5
+
+}
+
+function up_rep() {
+
+	say up
+	echo -n "up   "
+	count_rep 2 $((up_duration * 2))
+
+}
+
+function down_rep() {
+
+	say down
+	echo -n "down "
+	count_rep 2 $((down_duration * 2))
+
+}
+
+function rest() {
+
+	echo REST
+	say rest important
+	for sec in $(seq 1 $((rest_duration - 18))); do
+		echo -n "$((rest_duration + 1 - sec)) "
+		sleep 1
+	done
+	say_sentence set $1 "is starting in 15 seconds"&
+	echo -n "18 "
+	sleep 1
+	echo -n "17 "
+	sleep 1
+	echo -n "16 "
+	sleep 1
+
+}
+
+clear
+countdown
+echo
+echo
+for set in $(seq 1 $sets); do
+	clear
+	echo "SET $set"
+	echo
+	for rep in $(seq 1 $reps); do
+		echo "REP $rep"
+		down_rep $down_duration
+		echo
+		up_rep $up_duration
+		echo
+		echo
+	done
+	clear
+	rest $((set + 1))
+	countdown
+	echo
+	echo
+done;
