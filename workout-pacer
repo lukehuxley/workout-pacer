@@ -1,8 +1,8 @@
 #!/bin/bash
 
 sets=10
-reps=3
-rest_duration=25
+reps=10
+rest_duration=60
 up_duration=2
 down_duration=4
 
