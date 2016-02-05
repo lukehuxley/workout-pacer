@@ -1,0 +1,1 @@
+The script relies on mplayer (mplayer2 package in Ubuntu 15.10) and cwd needs to be the location of the script so it's executed ./workout-pacer, this will locate the mp3 files successfully. There are options at the top of the script that adjust the sets, reps and timings of the rest period and reps.
