@@ -73,8 +73,11 @@ function up_rep() {
 function down_rep() {
 
 	say down
+	sleep 0.5
+	echo "REP $rep"
+	say $rep
 	echo -n "down "
-	count_rep 2 $((down_duration * 2))
+	count_rep 2 $(((down_duration * 2 - 1)))
 
 }
 
@@ -105,7 +108,6 @@ for set in $(seq 1 $sets); do
 	echo "SET $set"
 	echo
 	for rep in $(seq 1 $reps); do
-		echo "REP $rep"
 		down_rep $down_duration
 		echo
 		up_rep $up_duration
@@ -113,8 +115,10 @@ for set in $(seq 1 $sets); do
 		echo
 	done
 	clear
-	rest $((set + 1))
-	countdown
-	echo
-	echo
-done;
+	if [ $set -lt $sets ]; then
+		rest $((set + 1))
+		countdown
+		echo
+		echo
+	fi
+done
